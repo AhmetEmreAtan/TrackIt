@@ -2,7 +2,6 @@ package com.aea.trackit.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -30,6 +29,8 @@ import com.aea.trackit.data.Habit
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.Alignment
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -65,6 +66,20 @@ fun HabitListScreen(
     }
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "TrackIt",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.DarkGray
+                )
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
@@ -85,34 +100,62 @@ fun HabitListScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
                         .combinedClickable(
-                            onClick = {
-                                viewModel.toggleHabitCompletion(habit)
-                            },
+                            onClick = { viewModel.toggleHabitCompletion(habit) },
                             onLongClick = {
                                 habitToDelete = habit
                                 showDialog = true
                             }
                         ),
+                    shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = if (habit.isCompleted) Color(0xFFD0F0C0) else Color.White
-                    )
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = habit.name, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                        habit.description?.let {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 0.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
                             Text(
-                                text = it,
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.padding(top = 4.dp)
+                                text = habit.name,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black
                             )
                         }
-                        Text(
-                            text = if (habit.isCompleted) "Durum: Tamamlandı ✅" else "Durum: Tamamlanmadı ❌",
-                            modifier = Modifier.padding(top = 8.dp),
-                            color = if (habit.isCompleted) Color.Green else Color.Red
-                        )
+                        if (habit.description != null) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 12.dp, bottom = 16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = habit.description,
+                                    color = Color.Black,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    modifier = Modifier.padding(start = 8.dp)
+                                )
+                                Text(
+                                    text = if (habit.isCompleted) "✅" else "❌",
+                                    color = if (habit.isCompleted) Color.Green else Color.Red,
+                                    modifier = Modifier.padding(end = 8.dp)
+                                )
+                            }
+                        } else {
+                            Text(
+                                text = if (habit.isCompleted) "✅" else "❌",
+                                color = if (habit.isCompleted) Color.Green else Color.Red,
+                                modifier = Modifier
+                                    .padding(vertical = 12.dp)
+                                    .align(Alignment.CenterHorizontally)
+                            )
+                        }
                     }
                 }
             }
