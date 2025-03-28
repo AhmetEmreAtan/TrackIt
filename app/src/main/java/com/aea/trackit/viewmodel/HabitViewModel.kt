@@ -33,7 +33,14 @@ class HabitViewModel(private val repository: HabitRepository) : ViewModel() {
         }
     }
 
-    private fun loadHabits() {
+    fun deleteHabit(habit: Habit) {
+        viewModelScope.launch {
+            repository.delete(habit)
+            loadHabits()
+        }
+    }
+
+    fun loadHabits() {
         viewModelScope.launch {
             _habits.value = repository.getAllHabits()
         }
@@ -43,6 +50,8 @@ class HabitViewModel(private val repository: HabitRepository) : ViewModel() {
         viewModelScope.launch {
             val updatedHabit = habit.copy(isCompleted = !habit.isCompleted)
             repository.update(updatedHabit)
+            loadHabits()
         }
     }
+
 }

@@ -1,7 +1,9 @@
 package com.aea.trackit.ui.screens
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,16 +20,49 @@ import androidx.navigation.NavController
 import com.aea.trackit.viewmodel.HabitViewModel
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import com.aea.trackit.data.Habit
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
-@OptIn(ExperimentalMaterial3Api::class)
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HabitListScreen(
     navController: NavController,
     viewModel: HabitViewModel
 ) {
     val habits by viewModel.habits.collectAsState()
-    val context = LocalContext.current
+
+    var showDialog by remember { mutableStateOf(false) }
+    var habitToDelete by remember { mutableStateOf<Habit?>(null) }
+
+    if (showDialog && habitToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Alışkanlığı Sil") },
+            text = { Text("Bu alışkanlığı silmek istiyor musun?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    habitToDelete?.let { viewModel.deleteHabit(it) }
+                    showDialog = false
+                }) {
+                    Text("Evet")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("İptal")
+                }
+            }
+        )
+    }
 
     Scaffold(
         floatingActionButton = {
@@ -49,9 +84,20 @@ fun HabitListScreen(
             items(habits) { habit ->
                 Card(
                     modifier = Modifier
-                        .padding(12.dp)
-                        .fillMaxWidth(),
-                    elevation = CardDefaults.cardElevation(8.dp)
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                        .combinedClickable(
+                            onClick = {
+                                viewModel.toggleHabitCompletion(habit)
+                            },
+                            onLongClick = {
+                                habitToDelete = habit
+                                showDialog = true
+                            }
+                        ),
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (habit.isCompleted) Color(0xFFD0F0C0) else Color.White
+                    )
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(text = habit.name, fontSize = 20.sp, fontWeight = FontWeight.Bold)

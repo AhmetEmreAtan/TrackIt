@@ -4,7 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -25,14 +27,21 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         setContent {
-            val database = HabitDatabase.getDatabase(applicationContext)
-            val repository = HabitRepository(database.habitDao())
+            val context = LocalContext.current
+            val db = HabitDatabase.getDatabase(context)
+            val repository = HabitRepository(db.habitDao())
             val viewModel: HabitViewModel = viewModel(factory = HabitViewModelFactory(repository))
+
 
             TrackItTheme {
                 CompositionLocalProvider(LocalHabitViewModel provides viewModel) {
                     val navController = rememberNavController()
+
+                    LaunchedEffect(Unit) {
+                        viewModel.loadHabits()
+                    }
 
                     NavHost(navController = navController, startDestination = "habit_list") {
                         composable("habit_list") {
