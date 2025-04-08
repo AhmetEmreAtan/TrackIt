@@ -1,4 +1,4 @@
-package com.aea.trackit.ui.screens
+package com.aea.trackit.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background

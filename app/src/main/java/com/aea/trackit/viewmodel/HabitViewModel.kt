@@ -25,9 +25,13 @@ class HabitViewModel(private val repository: HabitRepository) : ViewModel() {
     private val _monthlyCompletion = MutableStateFlow(0f)
     val monthlyCompletion: StateFlow<Float> = _monthlyCompletion
 
-    fun addHabit(name: String, description: String?) {
+    fun addHabit(name: String, description: String?, reminderInterval: Int, reminderPerDay: Int) {
         viewModelScope.launch {
-            val habit = Habit(name = name, description = description)
+            val habit = Habit(
+                name = name,
+                description = description,
+                reminderInterval = reminderInterval,
+                reminderPerDay = reminderPerDay)
             repository.insert(habit)
             loadHabits()
         }

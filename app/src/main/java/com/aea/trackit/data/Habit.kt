@@ -9,5 +9,7 @@ data class Habit(
     val name: String,
     val description: String? = null,
     val isCompleted: Boolean = false,
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
+    val reminderInterval: Int = 1,
+    val reminderPerDay: Int = 1
 )
