@@ -114,7 +114,7 @@ fun AddHabitScreen(
                 Slider(
                     value = remindersPerDay.toFloat(),
                     onValueChange = { remindersPerDay = it.toInt().coerceAtLeast(1) },
-                    valueRange = 1f..10f,
+                    valueRange = 1f..24f,
                     steps = 8,
                     modifier = Modifier
                         .fillMaxWidth()

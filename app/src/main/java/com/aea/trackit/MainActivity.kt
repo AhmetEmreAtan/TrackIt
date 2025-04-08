@@ -7,9 +7,12 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -17,8 +20,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aea.trackit.data.HabitRepository
 import com.aea.trackit.database.HabitDatabase
+import com.aea.trackit.navigation.BottomNavigationBar
 import com.aea.trackit.screens.AddHabitScreen
 import com.aea.trackit.screens.HabitListScreen
+import com.aea.trackit.screens.StatisticsScreen
 import com.aea.trackit.ui.theme.TrackItTheme
 import com.aea.trackit.viewmodel.HabitViewModel
 import com.aea.trackit.viewmodel.HabitViewModelFactory
@@ -53,17 +58,25 @@ class MainActivity : ComponentActivity() {
                         viewModel.loadHabits()
                     }
 
-                    NavHost(navController = navController, startDestination = "habit_list") {
-                        composable("habit_list") {
-                            HabitListScreen(navController = navController, viewModel = viewModel)
+                    Scaffold(
+                        bottomBar = {
+                            BottomNavigationBar(navController)
                         }
-                        composable("add_habit") {
-                            AddHabitScreen(
-                                navController = navController,
-                                viewModel = viewModel,
-                                reminderInterval = 1,
-                                reminderPerDay = 1
-                            )
+                    ) { paddingValues ->
+                        NavHost(
+                            navController = navController,
+                            startDestination = "habit_list",
+                            modifier = Modifier.padding(paddingValues)
+                        ) {
+                            composable("habit_list") {
+                                HabitListScreen(navController, viewModel)
+                            }
+                            composable("add_habit") {
+                                AddHabitScreen(navController, viewModel)
+                            }
+                            composable("statistics") {
+                                StatisticsScreen(navController, viewModel)
+                            }
                         }
                     }
                 }

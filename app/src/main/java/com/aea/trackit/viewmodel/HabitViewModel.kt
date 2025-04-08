@@ -46,9 +46,22 @@ class HabitViewModel(private val repository: HabitRepository) : ViewModel() {
 
     fun loadHabits() {
         viewModelScope.launch {
-            _habits.value = repository.getAllHabits()
+            val habits = repository.getAllHabits()
+            _habits.value = habits
+
+            val total = habits.size.takeIf { it > 0 } ?: 1
+            val completed = habits.count { it.isCompleted }
+
+            val dailyPercentage = completed.toFloat() / total
+            val weeklyPercentage = completed.toFloat() / total
+            val monthlyPercentage = completed.toFloat() / total
+
+            _dailyCompletion.value = dailyPercentage
+            _weeklyCompletion.value = weeklyPercentage
+            _monthlyCompletion.value = monthlyPercentage
         }
     }
+
 
     fun toggleHabitCompletion(habit: Habit) {
         viewModelScope.launch {
