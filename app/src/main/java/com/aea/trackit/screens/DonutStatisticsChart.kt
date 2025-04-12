@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.ui.graphics.drawscope.Stroke
 
 @Composable
@@ -24,7 +25,8 @@ fun DonutStatisticsChart(
     percentage: Float,
     label: String,
     completedCount: Int,
-    totalCount: Int
+    totalCount: Int,
+    onClick: () -> Unit
 ) {
     val animatedProgress by animateFloatAsState(
         targetValue = percentage,
@@ -39,7 +41,9 @@ fun DonutStatisticsChart(
     ) {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier.size(100.dp)
+            modifier = Modifier
+                .size(100.dp)
+                .clickable { onClick() }
         ) {
             Canvas(modifier = Modifier.size(100.dp)) {
                 val size = size.minDimension
@@ -80,7 +84,6 @@ fun DonutStatisticsChart(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Alt yazılar
         Text(
             text = label,
             color = Color.DarkGray,

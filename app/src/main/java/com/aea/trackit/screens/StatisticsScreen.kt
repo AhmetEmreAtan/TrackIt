@@ -15,12 +15,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.aea.trackit.viewmodel.HabitViewModel
-import com.aea.trackit.screens.DonutStatisticsChart
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.text.font.FontWeight
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatisticsScreen(navController: NavController, viewModel: HabitViewModel) {
+
     val dailyCompletion by viewModel.dailyCompletion.collectAsState()
     val weeklyCompletion by viewModel.weeklyCompletion.collectAsState()
     val monthlyCompletion by viewModel.monthlyCompletion.collectAsState()
@@ -33,14 +34,40 @@ fun StatisticsScreen(navController: NavController, viewModel: HabitViewModel) {
     val animatedWeekly by animateFloatAsState(targetValue = weeklyCompletion)
     val animatedMonthly by animateFloatAsState(targetValue = monthlyCompletion)
 
-    val scrollState = rememberScrollState() // 🌟 Scroll state
+    val scrollState = rememberScrollState()
+
+    // Bottom Sheet state
+    var showBottomSheet by remember { mutableStateOf(false) }
+
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = false
+    )
+    var isSheetOpen by remember { mutableStateOf(false) }
+    if (isSheetOpen) {
+        ModalBottomSheet(
+            onDismissRequest = { isSheetOpen = false },
+            sheetState = sheetState
+        ) {
+            Text(
+                text = "Detaylı İstatistikler",
+                modifier = Modifier.padding(16.dp),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "Buraya daha fazla bilgi koyabiliriz.",
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+    }
+
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
             .padding(16.dp)
-            .verticalScroll(scrollState) // 🌟 Kaydırma buraya eklendi
+            .verticalScroll(scrollState)
     ) {
         Text(
             text = "İstatistikler",
@@ -60,23 +87,25 @@ fun StatisticsScreen(navController: NavController, viewModel: HabitViewModel) {
             DonutStatisticsChart(
                 percentage = dailyCompletion,
                 label = "Bugün",
-                completedCount = 3,
-                totalCount = 5
+                completedCount = completedHabits,
+                totalCount = totalHabits,
+                onClick = { isSheetOpen = true }
             )
             DonutStatisticsChart(
                 percentage = weeklyCompletion,
                 label = "Bu Hafta",
-                completedCount = 10,
-                totalCount = 20
+                completedCount = completedHabits,
+                totalCount = totalHabits,
+                onClick = { isSheetOpen = true }
             )
             DonutStatisticsChart(
                 percentage = monthlyCompletion,
                 label = "Bu Ay",
-                completedCount = 50,
-                totalCount = 100
+                completedCount = completedHabits,
+                totalCount = totalHabits,
+                onClick = { isSheetOpen = true }
             )
         }
-
 
         Spacer(modifier = Modifier.height(16.dp))
 
