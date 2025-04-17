@@ -10,7 +10,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.aea.trackit.MainActivity
 import com.aea.trackit.R
-import com.aea.trackit.database.HabitDatabase
+import com.aea.trackit.data.HabitDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

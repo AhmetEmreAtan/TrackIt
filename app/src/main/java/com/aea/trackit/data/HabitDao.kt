@@ -23,4 +23,5 @@ interface HabitDao {
 
     @Query("UPDATE habits SET isCompleted = 0")
     suspend fun resetDailyHabits()
+
 }

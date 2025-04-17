@@ -1,10 +1,9 @@
 package com.aea.trackit.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PieChart
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -17,9 +16,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
     val items = listOf(
-        BottomNavItem("Ana Sayfa", "habit_list", Icons.Default.Home),
-        BottomNavItem("Ekle", "add_habit", Icons.Default.Add),
-        BottomNavItem("İstatistikler", "statistics", Icons.Default.PieChart)
+        BottomNavItem("Ana Sayfa",      "habit_list",      Icons.Default.Home),
+        BottomNavItem("Motivasyon",     "motivation_daily",Icons.Default.Favorite),
+        BottomNavItem("İstatistikler",  "statistics",      Icons.Default.PieChart)
     )
 
     val navBackStackEntry = navController.currentBackStackEntryAsState()

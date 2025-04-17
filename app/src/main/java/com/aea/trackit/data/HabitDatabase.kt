@@ -1,15 +1,18 @@
-package com.aea.trackit.database
+package com.aea.trackit.data
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.aea.trackit.data.Habit
-import com.aea.trackit.data.HabitDao
 
-@Database(entities = [Habit::class], version = 3, exportSchema = false)
+@Database(
+    entities = [Habit::class, HabitHistory::class],
+    version = 4,
+    exportSchema = false
+)
 abstract class HabitDatabase : RoomDatabase() {
     abstract fun habitDao(): HabitDao
+    abstract fun habitHistoryDao(): HabitHistoryDao
 
     companion object {
         @Volatile
