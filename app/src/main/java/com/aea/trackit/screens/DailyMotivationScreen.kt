@@ -8,67 +8,96 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.google.accompanist.pager.*
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun DailyMotivationScreen() {
-    var quote by remember { mutableStateOf("Başarı, çalışmaya dayanan bir yolculuktur, varış noktası değil.") }
+    val quotes = listOf(
+        "Her gün yeni bir başlangıçtır.",
+        "Küçük adımlar büyük sonuçlar getirir.",
+        "Başarı, azim ve kararlılıkla gelir."
+    )
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Günlük Motivasyon") },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
-            )
-        },
-        content = { padding ->
-            Column(
+    val pagerState = rememberPagerState()
+    val scope = rememberCoroutineScope()
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            HorizontalPager(
+                count = quotes.size,
+                state = pagerState,
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color(0xFFF5F5F5))
-                    .padding(padding)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+                    .weight(1f)
+            ) { page ->
                 Card(
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                        .height(200.dp)
+                        .padding(horizontal = 8.dp, vertical = 8.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFFBBDEFB)
+                    ),
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
                 ) {
-                    Column(
+                    Box(
                         modifier = Modifier
+                            .fillMaxSize()
                             .padding(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "“$quote”",
-                            fontSize = 20.sp,
-                            fontStyle = FontStyle.Italic,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.DarkGray
+                            text = quotes[page],
+                            style = MaterialTheme.typography.titleLarge,
+                            color = Color.Black,
+                            textAlign = TextAlign.Center
                         )
                     }
                 }
+            }
 
-                Spacer(modifier = Modifier.height(24.dp))
+            HorizontalPagerIndicator(
+                pagerState = pagerState,
+                activeColor = MaterialTheme.colorScheme.primary,
+                inactiveColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f),
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(vertical = 8.dp)
+            )
 
-                Button(
-                    onClick = { /* TODO: Yeni bir söz getir */ },
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .height(48.dp)
-                ) {
-                    Text("Yeni Söz", fontSize = 16.sp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                TextButton(onClick = {
+                    scope.launch {
+                        val prev = (pagerState.currentPage - 1).coerceAtLeast(0)
+                        pagerState.animateScrollToPage(prev)
+                    }
+                }) {
+                    Text("Önceki")
+                }
+                TextButton(onClick = {
+                    scope.launch {
+                        val next = (pagerState.currentPage + 1).coerceAtMost(quotes.lastIndex)
+                        pagerState.animateScrollToPage(next)
+                    }
+                }) {
+                    Text("Sonraki")
                 }
             }
         }
-    )
+    }
 }

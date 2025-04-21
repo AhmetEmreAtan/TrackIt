@@ -67,6 +67,10 @@ dependencies {
     //livedata
     implementation (libs.androidx.runtime.livedata)
 
+    //HorizontalPager
+    implementation (libs.com.google.accompanist.accompanist.pager)
+    implementation ("com.google.accompanist:accompanist-pager-indicators:0.30.1")
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
