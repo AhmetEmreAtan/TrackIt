@@ -96,6 +96,9 @@ class MainActivity : ComponentActivity() {
                             composable("habit_list") {
                                 HabitListScreen(navController, viewModel)
                             }
+                            composable("add_habit") {
+                                AddHabitScreen(navController, viewModel)
+                            }
                             composable("motivation_daily") {
                                 DailyMotivationScreen()
                             }
